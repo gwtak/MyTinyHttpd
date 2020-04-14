@@ -7,7 +7,7 @@
 #include<string.h>
 #include<pthread.h>
 #include<unistd.h>//close()
-
+//html部分使用的Tinyhttpd,有空更改
 
 int sock_init(){
 	int sockfd;
@@ -33,8 +33,6 @@ int sock_init(){
 void not_found(int connectfd){
 	char buf[1024];
 	sprintf(buf, "HTTP/1.1 404 NOT FOUND\r\n");
-	send(connectfd, buf, strlen(buf), 0);
-	sprintf(buf, "Server:@gwtak");
 	send(connectfd, buf, strlen(buf), 0);
 	sprintf(buf, "Content-Type: text/html\r\n");
 	send(connectfd, buf, strlen(buf), 0);
@@ -65,8 +63,8 @@ void method_head(int connectfd){
 
 void method_get(char* url,int connectfd){
 	if(url[strlen(url)-1]=='/')
-		strcat(url,"index.html");
-	
+		strcpy(url,"index.html");
+	printf("请求文件:%s\n",url);
 	FILE* file_point=fopen(url,"r");
 	if(file_point==NULL)
 		not_found(connectfd);
@@ -75,18 +73,16 @@ void method_get(char* url,int connectfd){
 		method_head(connectfd);
 		fgets(buf,1024,file_point);
 		while(!feof(file_point)){
-			send(connectfd,buf,strlen(buf),0);
+			send(connectfd,buf,strlen(buf),0);//一定要使用strlrn,不要使用sizeof,不然乱码
 			fgets(buf,1024,file_point);
 		}
+		fclose(file_point);
 	}
-	fclose(file_point);
 }
 
 void method_not_create(int connectfd){
 	char buf[1024];
 	sprintf(buf, "HTTP/1.1 501 Method Not Create\r\n");
-	send(connectfd, buf, strlen(buf), 0);
-	sprintf(buf, SERVER_STRING);
 	send(connectfd, buf, strlen(buf), 0);
 	sprintf(buf, "Content-Type: text/html\r\n");
 	send(connectfd, buf, strlen(buf), 0);
@@ -117,7 +113,7 @@ void* request(void* arg){
 		i++;
 	}
 	
-	while(buf[i]==' ')i++;
+	while(buf[i]==' ')i++;//忽略空格
 	
 	int j=0;
 	while(buf[i]!=' '){
@@ -126,14 +122,17 @@ void* request(void* arg){
 		j++;
 	}
 	
-	if(method=="GET"){
+	if(strcmp(method,"GET")==0){
+		printf("method:GET\n");
 		method_get(url,connectfd);
 	}
-	else if(method=="HEAD"){
+	else if(strcmp(method,"HEAD")==0){
+		printf("method:HEAD\n");
 		method_head(connectfd);
 	}
 	else{
-		method_not_create();
+		printf("method not create\n");
+		method_not_create(connectfd);
 	}
 	
 	close(connectfd);

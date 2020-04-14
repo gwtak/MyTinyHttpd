@@ -24,7 +24,6 @@ int main(int argc, char *argv[])
 
      len = sizeof(serv_addr);
 		
-	 printf("before connect\n");
      if( connect(sockfd, (struct sockaddr *)&serv_addr, len) == -1)
     {
       write(stdout,"connect error", 13);
@@ -33,7 +32,9 @@ int main(int argc, char *argv[])
 	
      write(sockfd,buf, sizeof(buf));
      read(sockfd,get, sizeof(get));
-
+	 
+	 printf("%s\n",get);
+	 
      close(sockfd);
      exit(0);
 }
