@@ -73,7 +73,7 @@ void method_get(char* url,int connectfd){
 		method_head(connectfd);
 		fgets(buf,1024,file_point);
 		while(!feof(file_point)){
-			send(connectfd,buf,strlen(buf),0);//一定要使用strlrn,不要使用sizeof,不然乱码
+			send(connectfd,buf,strlen(buf),0);//一定要使用strlen,不要使用sizeof,不然乱码
 			fgets(buf,1024,file_point);
 		}
 		fclose(file_point);
