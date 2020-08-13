@@ -143,7 +143,7 @@ int main(){
 	int connectfd;
 	struct sockaddr_in client;
 	pthread_t pthread_id;
-	socklen_t client_size=sizeof(client);//必须如此使用
+	socklen_t client_size=sizeof(client);//必须如此使用，不然accept不阻塞
 	
 	while(1){
 		if((connectfd=accept(sockfd,(struct sockaddr*)&client,&client_size))<0)
