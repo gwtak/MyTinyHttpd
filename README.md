@@ -1,5 +1,5 @@
-# my_tiny_http_server
-Linux环境下小型http服务器
+# MyTinyHttpd
+Linux环境下小型http服务器，仿照TinyHttpd
 
 实现GET、HEAD
 
